@@ -1,2 +1,6 @@
 .env
-env3.11
+env
+media
+media/temp_clips/
+*.mp3
+*.mp4

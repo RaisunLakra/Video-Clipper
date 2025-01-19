@@ -1,0 +1,4 @@
+python==3.12.8
+# pytube==15.0.0
+moviepy==2.1.2
+yt_dlp==2025.1.15
