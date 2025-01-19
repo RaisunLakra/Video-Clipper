@@ -8,7 +8,7 @@ import os
 def download_youtube_video(url, output_path="media/video"):
     ydl_opts = {
         'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]', 
-        'merge_output_format': '.mp4',
+        'merge_output_format': 'mp4',
         'outtmpl': output_path,
         'noplaylist': True,
     }
@@ -53,6 +53,9 @@ def extract_music(url, output_path="media/music"):
 def clip_and_remove_audio(video_path, intervals, temp_folder="media/temp_clips"):
     os.makedirs(temp_folder, exist_ok=True)
     clips = []
+
+    print("\n\n Video path = " + video_path.split('.')[0])
+    # video_path = video_path.split('.')[0]
     
     for i, (start_time, end_time) in enumerate(intervals):
         clip = VideoFileClip(video_path).subclipped(start_time, end_time).without_audio()
@@ -97,10 +100,7 @@ if __name__ == "__main__":
     ]
     
     downloaded_video = download_youtube_video(MEDIA_URL, VIDEO_FILE)
-    try:
-        clipped_video = clip_and_remove_audio(downloaded_video, CUTTING_TIME_INTERVALS)
-    except:
-        print("\n\n\npath = ", downloaded_video)
+    clipped_video = clip_and_remove_audio(downloaded_video, CUTTING_TIME_INTERVALS)
     downloaded_music = extract_music(MUSIC_URL, MUSIC_FILE)
     
     add_music_to_video(clipped_video, downloaded_music)
