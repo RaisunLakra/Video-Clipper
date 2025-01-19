@@ -8,7 +8,7 @@ import os
 def download_youtube_video(url, output_path="media/video"):
     ydl_opts = {
         'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]', 
-        'merge_output_format': 'mp4',
+        'merge_output_format': '.mp4',
         'outtmpl': output_path,
         'noplaylist': True,
     }
@@ -16,8 +16,8 @@ def download_youtube_video(url, output_path="media/video"):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
     
-    print("Video downloaded in HD quality:", output_path)
-    return output_path
+    print("Video downloaded in HD quality:", output_path+"mp4")
+    return output_path + ".mp4"
 
 
 def extract_music(url, output_path="media/music"):
@@ -97,7 +97,10 @@ if __name__ == "__main__":
     ]
     
     downloaded_video = download_youtube_video(MEDIA_URL, VIDEO_FILE)
-    clipped_video = clip_and_remove_audio(downloaded_video, CUTTING_TIME_INTERVALS)
+    try:
+        clipped_video = clip_and_remove_audio(downloaded_video, CUTTING_TIME_INTERVALS)
+    except:
+        print("\n\n\npath = ", downloaded_video)
     downloaded_music = extract_music(MUSIC_URL, MUSIC_FILE)
     
     add_music_to_video(clipped_video, downloaded_music)
