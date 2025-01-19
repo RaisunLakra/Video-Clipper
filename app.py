@@ -4,20 +4,21 @@ import os
 # import ffmpeg
 # from pytube import YouTube # Not working as video contain guns, it mark it as 18+ content restricting me to download it. so i used yt_dlp
 
+
 def download_youtube_video(url, output_path="media/video"):
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    if os.path.exists(output_path + ".mp4"):
-        print(f"Video already exists at: {output_path}. Skipping download.")
-        return output_path + ".mp4"
-    
     ydl_opts = {
-        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]', 
+        'merge_output_format': 'mp4',
         'outtmpl': output_path,
+        'noplaylist': True,
     }
+    
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
-    print("Video downloaded:", output_path + ".mp4")
-    return output_path + ".mp4"
+    
+    print("Video downloaded in HD quality:", output_path)
+    return output_path
+
 
 def extract_music(url, output_path="media/music"):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -101,3 +102,31 @@ if __name__ == "__main__":
     
     add_music_to_video(clipped_video, downloaded_music)
 
+# def add_music_to_video(video, music_path, output_path="final_video.mp4"):
+#     music = AudioFileClip(music_path)
+    
+#     # Repeat audio if it is shorter than the video duration
+#     if music.duration < video.duration:
+#         loops = int(video.duration // music.duration) + 1
+#         music = concatenate_audioclips([music] * loops).subclipped(0, video.duration)
+    
+#     # Add the repeated or original music to the video
+#     final_video = video.with_audio(music)
+#     final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+#     print("Final video with music saved:", output_path)
+
+# def add_music_to_video(video_path, music_path, output_path="final_video.mp4"):
+#     # Get durations
+#     video_duration = ffmpeg.probe(video_path, v='error', select_streams='v:0', show_entries='stream=duration')['streams'][0]['duration']
+#     audio_duration = ffmpeg.probe(music_path, v='error', select_streams='a:0', show_entries='stream=duration')['streams'][0]['duration']
+
+#     # Repeat audio if it's shorter than the video
+#     loops = int(float(video_duration) // float(audio_duration)) + 1
+#     repeated_audio_path = "media/temp_clips/repeated_audio.mp3"
+
+#     # Use ffmpeg to repeat the audio to match the video length
+#     ffmpeg.input(music_path, stream_loop=loops).output(repeated_audio_path).run()
+
+#     # Combine video and repeated audio
+#     ffmpeg.input(video_path).output(repeated_audio_path, output_path, vcodec='libx264', acodec='aac', strict='experimental').run()
+#     print(f"Final video with music saved to: {output_path}")
